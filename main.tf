@@ -66,6 +66,12 @@ module "k3s-cluster" {
   tg_port                       = var.tg_port
 }
 
+resource "local_file" "deploy_ssh_key" {
+  filename = "/tmp/id_rsa"
+  content  = var.private_key
+  file_permission = 600
+}
+
 resource "null_resource" "kubeconfig" {
   provisioner "remote-exec" {
     connection {
