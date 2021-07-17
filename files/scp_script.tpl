@@ -1,4 +1,4 @@
-echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - && \
+echo "$private_key" | tr -d '\r' | ssh-add - && \
 ssh -i ~/.ssh/id_rsa \
  -o StrictHostKeyChecking=no \
  -o UserKnownHostsFile=/dev/null \
