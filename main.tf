@@ -47,7 +47,7 @@ module "database" {
 
 module "k3s-cluster" {
   source                        = "app.terraform.io/alexismaior/k3s/aws"
-  version                       = "1.0.0"
+  version                       = "1.0.1"
   aws_region                    = var.aws_region
   instance_count                = var.instance_count
   instance_type                 = var.instance_type
@@ -55,7 +55,7 @@ module "k3s-cluster" {
   public_subnets                = module.networking.public_subnets
   vol_size                      = var.vol_size
   key_name                      = var.key_name
-  public_key_path               = var.public_key_path
+  public_key                    = var.public_key
   user_data_path                = var.user_data_path
   dbuser                        = var.dbuser
   dbpassword                    = var.dbpassword

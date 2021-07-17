@@ -35,7 +35,7 @@ variable "instance_count" {}
 variable "instance_type" {}
 variable "vol_size" {}
 variable "key_name" {}
-variable "public_key_path" {}
+variable "public_key" {}
 variable "user_data_path" {}
 variable "enable_lb_tg_group_attachment" {}
 variable "tg_port" {}
