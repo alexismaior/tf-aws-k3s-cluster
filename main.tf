@@ -72,7 +72,7 @@ resource "null_resource" "kubeconfig" {
       type        = "ssh"
       user        = "ubuntu"
       host        = module.k3s-cluster.instance[0].public_ip
-      private_key = file("/home/alexis/Documents/projects/aws/keys/alexis.pem")
+      private_key = var.private_key
     }
     inline = ["echo 'hello'"]
   }
@@ -82,7 +82,7 @@ resource "null_resource" "kubeconfig" {
         nodeip           = module.k3s-cluster.instance[0].public_ip
         k3s_path         = "${path.cwd}"
         nodename         = module.k3s-cluster.instance[0].tags.Name
-        private_key_path = "/home/alexis/Documents/projects/aws/keys/alexis.pem"
+        private_key      = var.private_key
       }
     )
   }
