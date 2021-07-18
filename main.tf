@@ -94,22 +94,25 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-resource "helm_release" "applications" {
-  depends_on = [module.k3s-cluster, null_resource.kubeconfig]
-
-  for_each = local.charts
-
-  name = each.key
-
-  repository = each.value.repo
-  chart      = each.value.chart
-  namespace  = each.value.namespace
-
-  dynamic "set" {
-    for_each = each.value.values
-    content {
-      name  = set.value.name
-      value = set.value.value
-    }
-  }
+data "local_file" "kubeconfig" {
+    filename = "${k3s_path}/files/k3s-${nodename}.yaml"
 }
+# resource "helm_release" "applications" {
+#   depends_on = [module.k3s-cluster, null_resource.kubeconfig]
+#
+#   for_each = local.charts
+#
+#   name = each.key
+#
+#   repository = each.value.repo
+#   chart      = each.value.chart
+#   namespace  = each.value.namespace
+#
+#   dynamic "set" {
+#     for_each = each.value.values
+#     content {
+#       name  = set.value.name
+#       value = set.value.value
+#     }
+#   }
+# }

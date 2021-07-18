@@ -5,3 +5,7 @@ output "nodes" {
 output "loadbalancer" {
   value = module.loadbalancer.lb_endpoint
 }
+
+output "kubeconfig" {
+  data.local_file.kubeconfig
+}
