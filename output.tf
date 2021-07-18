@@ -7,5 +7,5 @@ output "loadbalancer" {
 }
 
 output "kubeconfig" {
-  data.local_file.kubeconfig
+  value = data.local_file.kubeconfig
 }
