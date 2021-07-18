@@ -94,9 +94,9 @@ resource "null_resource" "kubeconfig" {
   }
 }
 
-data "local_file" "kubeconfig" {
-    filename = "${k3s_path}/files/k3s-${nodename}.yaml"
-}
+# data "local_file" "kubeconfig" {
+#     filename = "${k3s_path}/files/k3s-${nodename}.yaml"
+# }
 # resource "helm_release" "applications" {
 #   depends_on = [module.k3s-cluster, null_resource.kubeconfig]
 #
