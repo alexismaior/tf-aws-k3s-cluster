@@ -88,31 +88,36 @@ resource "null_resource" "kubeconfig" {
         nodeip           = module.k3s-cluster.instance[0].public_ip
         k3s_path         = "${path.cwd}"
         nodename         = module.k3s-cluster.instance[0].tags.Name
-        private_key      = var.private_key
+        private_key      = file(var.private_key)
       }
     )
   }
 }
 
-# data "local_file" "kubeconfig" {
-#     filename = "${k3s_path}/files/k3s-${nodename}.yaml"
-# }
-# resource "helm_release" "applications" {
-#   depends_on = [module.k3s-cluster, null_resource.kubeconfig]
-#
-#   for_each = local.charts
-#
-#   name = each.key
-#
-#   repository = each.value.repo
-#   chart      = each.value.chart
-#   namespace  = each.value.namespace
-#
-#   dynamic "set" {
-#     for_each = each.value.values
-#     content {
-#       name  = set.value.name
-#       value = set.value.value
-#     }
-#   }
-# }
+data "local_file" "kubeconfig" {
+    filename = "${path.cwd}/files/k3s-${module.k3s-cluster.instance[0].tags.Name}.yaml"
+}
+
+resource "local_file" "kubeconfig" {
+  filename = "./kubeconfig"
+  content  = data.local_file.kubeconfig.content
+}
+resource "helm_release" "applications" {
+  depends_on = [module.k3s-cluster, null_resource.kubeconfig]
+
+  for_each = local.charts
+
+  name = each.key
+
+  repository = each.value.repo
+  chart      = each.value.chart
+  namespace  = each.value.namespace
+
+  dynamic "set" {
+    for_each = each.value.values
+    content {
+      name  = set.value.name
+      value = set.value.value
+    }
+  }
+}

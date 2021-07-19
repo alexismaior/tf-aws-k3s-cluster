@@ -6,6 +6,6 @@ output "loadbalancer" {
   value = module.loadbalancer.lb_endpoint
 }
 
-# output "kubeconfig" {
-#   value = data.local_file.kubeconfig
-# }
+output "kubeconfig" {
+  value = data.local_file.kubeconfig.content
+}
