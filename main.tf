@@ -88,7 +88,6 @@ resource "null_resource" "kubeconfig" {
         nodeip           = module.k3s-cluster.instance[0].public_ip
         k3s_path         = "${path.cwd}"
         nodename         = module.k3s-cluster.instance[0].tags.Name
-        private_key      = file(var.private_key)
       }
     )
   }
