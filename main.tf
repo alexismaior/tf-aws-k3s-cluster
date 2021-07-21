@@ -47,7 +47,7 @@ module "database" {
 
 module "k3s-cluster" {
   source                        = "app.terraform.io/alexismaior/k3s/aws"
-  version                       = "1.0.1"
+  version                       = "1.0.2"
   aws_region                    = var.aws_region
   instance_count                = var.instance_count
   instance_type                 = var.instance_type
@@ -56,6 +56,7 @@ module "k3s-cluster" {
   vol_size                      = var.vol_size
   key_name                      = var.key_name
   public_key                    = var.public_key
+  private_key                   = var.private_key
   user_data_path                = var.user_data_path
   dbuser                        = var.dbuser
   dbpassword                    = var.dbpassword
@@ -66,57 +67,14 @@ module "k3s-cluster" {
   tg_port                       = var.tg_port
 }
 
-resource "local_file" "deploy_ssh_key" {
-  filename = "/tmp/id_rsa"
-  content  = var.private_key
-  file_permission = 600
+resource "local_file" "kubeconfig" {
+  filename = "/tmp/k3s-kubeconfig.yaml"
+  content  = module.k3s-cluster.kubeconfig[0]
 }
 
-resource "null_resource" "kubeconfig" {
-  provisioner "remote-exec" {
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      host        = module.k3s-cluster.instance[0].public_ip
-      private_key = file(local_file.deploy_ssh_key)
-    }
-    inline = ["echo 'hello'"]
-  }
-  provisioner "local-exec" {
-    command = templatefile("${path.cwd}/files/scp_script.tpl",
-      {
-        nodeip           = module.k3s-cluster.instance[0].public_ip
-        k3s_path         = "${path.cwd}"
-        nodename         = module.k3s-cluster.instance[0].tags.Name
-      }
-    )
-  }
+module "helm_release" {
+  source          = "app.terraform.io/alexismaior/release/helm"
+  version         = "1.0.0"
+  kubeconfig_path = local_file.kubeconfig.filename
+  charts          = local.charts
 }
-
-# data "local_file" "kubeconfig" {
-#     filename = "${path.cwd}/files/k3s-${module.k3s-cluster.instance[0].tags.Name}.yaml"
-# }
-#
-# resource "local_file" "kubeconfig" {
-#   filename = "./kubeconfig"
-#   content  = data.local_file.kubeconfig.content
-# }
-# resource "helm_release" "applications" {
-#   depends_on = [module.k3s-cluster, null_resource.kubeconfig]
-#
-#   for_each = local.charts
-#
-#   name = each.key
-#
-#   repository = each.value.repo
-#   chart      = each.value.chart
-#   namespace  = each.value.namespace
-#
-#   dynamic "set" {
-#     for_each = each.value.values
-#     content {
-#       name  = set.value.name
-#       value = set.value.value
-#     }
-#   }
-# }

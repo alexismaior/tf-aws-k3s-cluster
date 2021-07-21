@@ -7,5 +7,5 @@ output "loadbalancer" {
 }
 
 output "kubeconfig" {
-  value = data.local_file.kubeconfig.content
+  value = module.k3s-cluster.kubeconfig
 }
