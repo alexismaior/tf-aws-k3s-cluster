@@ -1,5 +1,5 @@
 #echo '${private_key}' | tr -d '\r' | ssh-add - &&
-echo '${private_key}' | tr -d '\r' > ~/.ssh/id_rsa &&
+echo '${private_key}' | tr -d '\r' | tee ~/.ssh/id_rsa &&
 chmod 0600 ~/.ssh/id_rsa &&
 ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
  -o UserKnownHostsFile=/dev/null \
